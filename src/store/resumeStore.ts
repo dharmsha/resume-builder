@@ -1,7 +1,7 @@
+// src/store/resumeStore.ts
 import { types, Instance, SnapshotIn, applySnapshot } from "mobx-state-tree";
 
 // --- MODELS ---
-
 export const PersonalInfo = types.model("PersonalInfo", {
   id: types.identifier,
   fullName: types.string,
@@ -17,11 +17,15 @@ export const PersonalInfo = types.model("PersonalInfo", {
 
 export const Education = types.model("Education", {
   id: types.identifier,
+  educationType: types.enumeration(["10th", "12th", "Diploma", "Bachelor's", "Master's", "PhD", "Other"]),
   degree: types.string,
   institution: types.string,
+  boardUniversity: types.optional(types.string, ""),
   year: types.string,
+  scoreType: types.enumeration(["Percentage", "CGPA", "GPA"]),
   score: types.string,
-  location: types.string
+  location: types.string,
+  description: types.optional(types.string, "")
 });
 
 export const Experience = types.model("Experience", {
@@ -63,7 +67,6 @@ export const Certification = types.model("Certification", {
 });
 
 // --- MAIN STORE ---
-
 const ResumeStore = types
   .model("ResumeStore", {
     personalInfo: PersonalInfo,
@@ -84,6 +87,12 @@ const ResumeStore = types
     // Education Actions
     addEducation(edu: SnapshotIn<typeof Education>) {
       self.education.push(Education.create({ ...edu, id: Date.now().toString() }));
+    },
+    updateEducation(id: string, updates: Partial<SnapshotIn<typeof Education>>) {
+      const education = self.education.find(edu => edu.id === id);
+      if (education) {
+        Object.assign(education, updates);
+      }
     },
     removeEducation(id: string) {
       const index = self.education.findIndex(edu => edu.id === id);
@@ -126,7 +135,7 @@ const ResumeStore = types
       if (index !== -1) self.languages.splice(index, 1);
     },
 
-    // Certification Actions (Fix for your error)
+    // Certification Actions
     addCertification(cert: SnapshotIn<typeof Certification>) {
       self.certifications.push(Certification.create({ ...cert, id: Date.now().toString() }));
     },
@@ -166,21 +175,21 @@ const ResumeStore = types
 
 export type IResumeStore = Instance<typeof ResumeStore>;
 
-// Initial Instance
+// Initial Instance - COMPLETELY EMPTY for multiple users
 export const resumeStore = ResumeStore.create({
   personalInfo: {
     id: "1",
-    fullName: "John Doe",
-    title: "Creative Copywriter",
+    fullName: "",           // <-- Changed from "John Doe"
+    title: "",             // <-- Changed from "Creative Copywriter"
     photo: "",
-    email: "john.doe@example.com",
-    phone: "+1 (123) 456-7890",
-    address: "New York, USA",
+    email: "",             // <-- Changed from "john.doe@example.com"
+    phone: "",             // <-- Changed from "+1 (123) 456-7890"
+    address: "",           // <-- Changed from "New York, USA"
     linkedin: "",
     github: "",
-    summary: "Passionate professional with experience in software development..."
+    summary: ""            // <-- Changed from long example summary
   },
-  education: [],
+  education: [],           // <-- Changed from example education data
   experience: [],
   skills: [],
   projects: [],
