@@ -1,146 +1,104 @@
-// src/app/page.tsx
 "use client";
 
 import React, { useState } from "react";
-import { 
-  Container, 
-  Grid, 
-  Box, 
-  Button, 
-  Typography 
-} from "@mui/material";
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
+import { Container, Grid, Box } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { observer } from "mobx-react-lite";
+
+// Aapke Components
+import Navbar from "@/components/Navbar";
+import HeroSection from "@/components/HeroSection"; // Hero section import kiya
 import PersonalForm from "@/components/PersonalForm";
 import ProfessionalTemplate from "@/components/ProfessionalTemplate";
 import PDFExport from "@/components/PDFExport";
-import { observer } from "mobx-react-lite";
+
 import { resumeStore } from "@/store/resumeStore";
 
-// सुनिश्चित करें कि ये components exist करते हैं
-// या temporary placeholder components बनाएं
+// Temporary Forms (Inhe aap actual components se replace karein)
+const EducationForm = () => <Box sx={{ p: 2 }}>Education Details Content...</Box>;
+const ExperienceForm = () => <Box sx={{ p: 2 }}>Experience Details Content...</Box>;
+const SkillsForm = () => <Box sx={{ p: 2 }}>Skills Details Content...</Box>;
 
 const theme = createTheme({
   palette: {
     primary: { main: "#1976d2" },
-    secondary: { main: "#dc004e" }
   },
-  typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-  }
 });
-
-// Temporary Placeholder Components (अगर missing हों तो)
-const EducationForm = () => (
-  <Box sx={{ p: 2, border: "1px dashed #ccc", borderRadius: 1 }}>
-    <Typography variant="h6" gutterBottom>Education Form</Typography>
-    <Typography>Education form will appear here</Typography>
-  </Box>
-);
-
-const ExperienceForm = () => (
-  <Box sx={{ p: 2, border: "1px dashed #ccc", borderRadius: 1 }}>
-    <Typography variant="h6" gutterBottom>Experience Form</Typography>
-    <Typography>Experience form will appear here</Typography>
-  </Box>
-);
-
-const SkillsForm = () => (
-  <Box sx={{ p: 2, border: "1px dashed #ccc", borderRadius: 1 }}>
-    <Typography variant="h6" gutterBottom>Skills Form</Typography>
-    <Typography>Skills form will appear here</Typography>
-  </Box>
-);
 
 const HomePage = observer(() => {
   const [activeSection, setActiveSection] = useState("personal");
 
   return (
     <ThemeProvider theme={theme}>
-      <AppBar position="sticky" sx={{ zIndex: 1201 }}>
-        <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Professional Resume Builder
-          </Typography>
-          <Button 
-            color="inherit" 
-            onClick={() => {
-              if (resumeStore && resumeStore.reset) {
-                resumeStore.reset();
-              } else {
-                console.log("Resume Store not available");
-              }
-            }}
-          >
-            Reset
-          </Button>
-        </Toolbar>
-      </AppBar>
-      
-      <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-        <Grid container spacing={4}>
-          {/* Left Column - Forms */}
-          <Grid item xs={12} md={5} lg={4}>
-            <Box sx={{ 
-              position: "sticky", 
-              top: 80,
-              bgcolor: "background.paper",
-              borderRadius: 2,
-              p: 2,
-              boxShadow: 1
-            }}>
-              {/* Navigation Tabs */}
-              <Box sx={{ mb: 3, display: "flex", gap: 1, flexWrap: "wrap" }}>
-                {["personal", "education", "experience", "skills"].map((section) => (
-                  <Button
-                    key={section}
-                    variant={activeSection === section ? "contained" : "outlined"}
-                    onClick={() => setActiveSection(section)}
-                    sx={{ 
-                      textTransform: "capitalize", 
-                      mb: 1,
-                      fontSize: { xs: "0.8rem", sm: "0.875rem" }
-                    }}
-                    size="small"
-                  >
-                    {section}
-                  </Button>
-                ))}
-              </Box>
+      <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        
+        {/* 1. Navbar: Har waqt top pe rahega */}
+        <Navbar 
+          onSectionChange={(section) => setActiveSection(section)} 
+          onReset={() => resumeStore?.reset()}
+        />
 
-              {/* Dynamic Form Display */}
-              <Box sx={{ minHeight: 300 }}>
-                {activeSection === "personal" && <PersonalForm />}
-                {activeSection === "education" && <EducationForm />}
-                {activeSection === "experience" && <ExperienceForm />}
-                {activeSection === "skills" && <SkillsForm />}
-              </Box>
+        {/* 2. Hero Section: IT Company wala look */}
+        <HeroSection />
 
-              {/* Export Button */}
-              <Box sx={{ mt: 4, textAlign: "center" }}>
-                <PDFExport />
+        {/* 3. Main Content: Resume Builder UI */}
+        <Container maxWidth="xl" id="builder-section" sx={{ py: 8 }}>
+          <Grid container spacing={4}>
+            
+            {/* LEFT SIDE: Input Forms */}
+            <Grid item xs={12} md={5}>
+              <Box sx={{ 
+                p: 3, 
+                border: "1px solid #eee", 
+                borderRadius: 4, 
+                bgcolor: "white",
+                boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+                position: "sticky",
+                top: "100px",
+                zIndex: 10
+              }}>
+                <Box sx={{ minHeight: "450px" }}>
+                  {activeSection === "personal" && <PersonalForm />}
+                  {activeSection === "education" && <EducationForm />}
+                  {activeSection === "experience" && <ExperienceForm />}
+                  {activeSection === "skills" && <SkillsForm />}
+                  
+                  {activeSection === "home" && (
+                    <Box sx={{ textAlign: 'center', mt: 5 }}>
+                      <h2 style={{ color: '#2D3047' }}>Ready to Start?</h2>
+                      <p>Select a category from the navbar to update your resume.</p>
+                    </Box>
+                  )}
+                </Box>
+
+                <Box sx={{ mt: 3, borderTop: "1px solid #f0f0f0", pt: 2, textAlign: "center" }}>
+                  <PDFExport />
+                </Box>
               </Box>
-            </Box>
+            </Grid>
+
+            {/* RIGHT SIDE: Live Preview */}
+            <Grid item xs={12} md={7}>
+              <Box sx={{ 
+                bgcolor: "#525659", 
+                p: { xs: 1, md: 4 }, 
+                borderRadius: 4,
+                display: "flex",
+                justifyContent: "center",
+                minHeight: "100vh",
+                boxShadow: "inset 0 0 50px rgba(0,0,0,0.2)"
+              }}>
+                <ProfessionalTemplate />
+              </Box>
+            </Grid>
+
           </Grid>
-          
-          {/* Right Column - Preview */}
-          <Grid item xs={12} md={7} lg={8}>
-            <Box sx={{ 
-              position: "sticky", 
-              top: 80,
-              display: "flex",
-              justifyContent: "center",
-              p: 2,
-              bgcolor: "#f5f5f5",
-              borderRadius: 2,
-              minHeight: "calc(100vh - 100px)"
-            }}>
-              <ProfessionalTemplate />
-            </Box>
-          </Grid>
-        </Grid>
-      </Container>
+        </Container>
+
+        {/* 4. Footer */}
+       
+        
+      </Box>
     </ThemeProvider>
   );
 });

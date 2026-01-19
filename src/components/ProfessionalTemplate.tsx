@@ -8,15 +8,28 @@ import {
   Phone as PhoneIcon,
   LocationOn as LocationIcon,
   LinkedIn as LinkedInIcon,
-  Language as LanguageIcon,
   Star as StarIcon,
   StarBorder as StarBorderIcon,
   School as SchoolIcon,
 } from "@mui/icons-material";
 
+// TypeScript interface for personal info with photo
+// TypeScript interface for personal info with photo
+interface PersonalInfoWithPhoto {
+  fullName: string;
+  title: string;
+  summary: string;
+  email: string;
+  phone: string;
+  address: string;
+  linkedin: string;
+  photo?: string;
+  [key: string]: unknown; 
+}
+
 const CreativeTemplate: React.FC = () => {
   return useObserver(() => {
-    // Calculate if we have content
+    // ... existing content checks ...
     const hasExperience = resumeStore.experience.length > 0;
     const hasEducation = resumeStore.education.length > 0;
     const hasSkills = resumeStore.skills.length > 0;
@@ -30,17 +43,17 @@ const CreativeTemplate: React.FC = () => {
     const firstName = fullName.split(' ')[0] || "Y";
     const title = resumeStore.personalInfo.title || "Your Profession";
     
-    // Safely access photo property with type assertion
-    const personalInfo = resumeStore.personalInfo as any;
+    // FIXED ERROR HERE: Double casting through unknown
+    const personalInfo = (resumeStore.personalInfo as unknown) as PersonalInfoWithPhoto;
     const photo = personalInfo.photo || null;
 
-    // Color palette
+    // ... rest of your code remains exactly the same ...
     const colors = {
-      primary: "#FF6B6B", // Coral Red
-      secondary: "#4ECDC4", // Turquoise
-      accent: "#FFD166", // Yellow
-      dark: "#2D3047", // Navy Blue
-      light: "#F7FFF7", // Off White
+      primary: "#FF6B6B",
+      secondary: "#4ECDC4",
+      accent: "#FFD166",
+      dark: "#2D3047",
+      light: "#F7FFF7",
       gray: "#A1A1A1",
       darkGray: "#333333"
     };
@@ -110,11 +123,12 @@ const CreativeTemplate: React.FC = () => {
           color: colors.darkGray,
           width: "210mm",
           minHeight: "297mm",
+          height: "auto",
           margin: "0 auto",
           fontFamily: "'Poppins', 'Montserrat', 'Raleway', sans-serif",
           lineHeight: 1.6,
           boxSizing: 'border-box',
-          overflow: 'hidden',
+          overflow: 'visible',
           position: 'relative',
           '&::before': {
             content: '""',
@@ -152,16 +166,21 @@ const CreativeTemplate: React.FC = () => {
         }} />
 
         {/* Main Grid */}
-        <Grid container sx={{ position: 'relative', zIndex: 1 }}>
+        <Grid container sx={{ 
+          position: 'relative', 
+          zIndex: 1,
+          height: "auto"
+        }}>
           
           {/* Left Sidebar - Colorful */}
           <Grid item xs={4} sx={{ 
             bgcolor: colors.dark, 
             color: 'white',
             p: 4,
-            minHeight: '297mm',
+            minHeight: "297mm",
+            height: "auto",
             position: 'relative',
-            overflow: 'hidden',
+            overflow: 'visible',
             '&::after': {
               content: '""',
               position: 'absolute',
@@ -553,12 +572,18 @@ const CreativeTemplate: React.FC = () => {
           </Grid>
           
           {/* Right Content Area */}
-          <Grid item xs={8} sx={{ p: 4, bgcolor: colors.light }}>
+          <Grid item xs={8} sx={{ 
+            p: 4, 
+            bgcolor: colors.light,
+            minHeight: "297mm",
+            height: "auto",
+            overflow: "visible"
+          }}>
             
             {/* About/Summary */}
             {hasSummary && (
               <Box sx={{ 
-                mb: 5,
+                mb: 4,
                 position: 'relative',
                 '&::before': {
                   content: '""',
@@ -612,7 +637,7 @@ const CreativeTemplate: React.FC = () => {
             
             {/* Experience - Timeline Style */}
             {hasExperience && (
-              <Box sx={{ mb: 5 }}>
+              <Box sx={{ mb: 4 }}>
                 <Typography 
                   variant="h2" 
                   sx={{ 
@@ -649,7 +674,7 @@ const CreativeTemplate: React.FC = () => {
                     sx={{ 
                       position: 'relative',
                       pl: 4,
-                      mb: 4,
+                      mb: 3,
                       '&::before': {
                         content: '""',
                         position: 'absolute',
@@ -677,7 +702,7 @@ const CreativeTemplate: React.FC = () => {
                     <Box sx={{
                       bgcolor: 'white',
                       borderRadius: '12px',
-                      p: 3,
+                      p: 2,
                       boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
                       transition: 'all 0.3s ease',
                       '&:hover': {
@@ -727,11 +752,12 @@ const CreativeTemplate: React.FC = () => {
                       
                       <Box component="ul" sx={{ 
                         pl: 0,
-                        mt: 2,
+                        mt: 1.5,
+                        mb: 1.5,
                         '& li': {
                           listStyle: 'none',
                           fontSize: "12px",
-                          mb: 1.5,
+                          mb: 1,
                           color: colors.darkGray,
                           lineHeight: 1.6,
                           display: 'flex',
@@ -753,7 +779,7 @@ const CreativeTemplate: React.FC = () => {
                       
                       {/* Skills used in this role */}
                       {exp.skills && exp.skills.length > 0 && (
-                        <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                        <Box sx={{ mt: 1.5, display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                           {exp.skills.slice(0, 5).map((skill: string, i: number) => (
                             <Chip
                               key={i}
@@ -778,7 +804,7 @@ const CreativeTemplate: React.FC = () => {
             
             {/* Education Section - Detailed */}
             {hasEducation && (
-              <Box sx={{ mb: 5 }}>
+              <Box sx={{ mb: 4 }}>
                 <Typography 
                   variant="h2" 
                   sx={{ 
@@ -815,9 +841,10 @@ const CreativeTemplate: React.FC = () => {
                       <Paper elevation={0} sx={{ 
                         bgcolor: 'white',
                         borderRadius: '12px',
-                        p: 3,
+                        p: 2,
                         boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
                         transition: 'all 0.3s ease',
+                        mb: 2,
                         '&:hover': {
                           transform: 'translateY(-4px)',
                           boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
@@ -951,14 +978,15 @@ const CreativeTemplate: React.FC = () => {
             )}
             
             {/* Skills & Achievements Grid */}
-            <Grid container spacing={3}>
+            <Grid container spacing={2} sx={{ mb: 3 }}>
               {/* Skills Column */}
               <Grid item xs={6}>
                 <Paper elevation={0} sx={{ 
                   bgcolor: 'white', 
                   borderRadius: '12px',
-                  p: 3,
-                  height: '100%',
+                  p: 2,
+                  height: 'auto',
+                  minHeight: '200px',
                   border: `1px solid ${colors.gray}20`,
                   boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
                 }}>
@@ -968,7 +996,7 @@ const CreativeTemplate: React.FC = () => {
                       fontSize: "18px",
                       fontWeight: 700,
                       color: colors.dark,
-                      mb: 3,
+                      mb: 2,
                       display: 'flex',
                       alignItems: 'center',
                       '&::before': {
@@ -996,7 +1024,7 @@ const CreativeTemplate: React.FC = () => {
                         const skillLevel = getSkillLevel(skill.level);
                         return (
                           <Grid item xs={6} key={skill.id}>
-                            <Box sx={{ mb: 2 }}>
+                            <Box sx={{ mb: 1.5 }}>
                               <Box display="flex" justifyContent="space-between" alignItems="center" mb={0.5}>
                                 <Typography variant="body2" sx={{ fontSize: "12px", fontWeight: 600 }}>
                                   {skill.name}
@@ -1039,8 +1067,9 @@ const CreativeTemplate: React.FC = () => {
                 <Paper elevation={0} sx={{ 
                   bgcolor: colors.dark, 
                   borderRadius: '12px',
-                  p: 3,
-                  height: '100%',
+                  p: 2,
+                  height: 'auto',
+                  minHeight: '200px',
                   color: 'white',
                   boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                 }}>
@@ -1049,7 +1078,7 @@ const CreativeTemplate: React.FC = () => {
                     sx={{ 
                       fontSize: "18px",
                       fontWeight: 700,
-                      mb: 3,
+                      mb: 2,
                       color: colors.accent,
                       display: 'flex',
                       alignItems: 'center',
@@ -1064,7 +1093,7 @@ const CreativeTemplate: React.FC = () => {
                   </Typography>
                   
                   {hasProjects ? (
-                    <Box sx={{ '& > div': { mb: 2 } }}>
+                    <Box sx={{ '& > div': { mb: 1.5 } }}>
                       {resumeStore.projects.slice(0, 4).map((project) => (
                         <Box display="flex" alignItems="flex-start" key={project.id}>
                           <Box sx={{
@@ -1102,7 +1131,7 @@ const CreativeTemplate: React.FC = () => {
                       ))}
                     </Box>
                   ) : hasCertifications ? (
-                    <Box sx={{ '& > div': { mb: 2 } }}>
+                    <Box sx={{ '& > div': { mb: 1.5 } }}>
                       {resumeStore.certifications.slice(0, 4).map((cert) => (
                         <Box display="flex" alignItems="flex-start" key={cert.id}>
                           <Box sx={{
@@ -1140,8 +1169,8 @@ const CreativeTemplate: React.FC = () => {
             
             {/* Footer Quote */}
             <Box sx={{ 
-              mt: 4,
-              pt: 3,
+              mt: 3,
+              pt: 2,
               borderTop: `1px solid ${colors.gray}30`,
               textAlign: 'center',
               position: 'relative',

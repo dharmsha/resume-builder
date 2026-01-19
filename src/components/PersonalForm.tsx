@@ -279,8 +279,8 @@ const UniversalResumeForm: React.FC = () => {
                   <MenuItem value="10th">10th / Secondary</MenuItem>
                   <MenuItem value="12th">12th / Higher Secondary</MenuItem>
                   <MenuItem value="Diploma">Diploma</MenuItem>
-                  <MenuItem value="Bachelor's">Bachelor's Degree</MenuItem>
-                  <MenuItem value="Master's">Master's Degree</MenuItem>
+                  <MenuItem value="Bachelor's">Bachelors Degree</MenuItem>
+                  <MenuItem value="Master's">Masters Degree</MenuItem>
                   <MenuItem value="PhD">PhD / Doctorate</MenuItem>
                   <MenuItem value="Other">Other</MenuItem>
                 </Select>
